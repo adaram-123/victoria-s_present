@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stella's Study Nook ✨</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎀</text></svg>" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
+  :root{
+    --blush:#FFF0F6; --cream:#FFFCFE; --pink:#FF8FB8; --hotpink:#FF5C8A;
+    --berry:#D4396E; --plum:#4A3357; --gold:#FFD86B; --lilac:#E9D5FF; --mint:#C9F0DD;
+    --font:'Quicksand','Baloo 2','Comic Sans MS','Segoe UI Rounded',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100%;}
+  body{
+    font-family:var(--font); color:var(--plum);
+    background:
+      radial-gradient(1200px 500px at 50% -10%, #E9D5FF55, transparent),
+      linear-gradient(180deg, var(--blush), #FFF7FB);
+    min-height:100vh; position:relative; overflow-x:hidden; padding:22px 16px 40px;
+  }
+  .display{font-family:'Baloo 2',var(--font);}
+  .starfield{position:fixed; inset:0; pointer-events:none; z-index:0;}
+  .bg-star{position:absolute; animation:twinkle 4s ease-in-out infinite;}
+  @keyframes twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.7;transform:scale(1.1)}}
+  .stella-bob{animation:bob 3.4s ease-in-out infinite; transform-origin:center;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+  .content{position:relative; z-index:1; max-width:720px; margin:0 auto;}
+  .card{background:var(--cream); border:2.5px solid var(--pink); border-radius:26px;
+    box-shadow:0 10px 0 #FF8FB833, 0 18px 34px #FF8FB82e;}
+  button{cursor:pointer;border:none;font-family:inherit;font-weight:700;}
+  .btn{transition:transform .12s,filter .12s;}
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.03);}
+  .btn:active{transform:translateY(0);}
+  button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--berry);outline-offset:2px;}
+  input,textarea{font-family:inherit;color:var(--plum);border:2px solid #FF8FB888;background:#fff;
+    border-radius:16px;padding:11px 14px;font-size:15px;width:100%;}
+  input::placeholder,textarea::placeholder{color:var(--pink);}
+  .chip{border:2px solid #FF8FB888;background:#fff;color:var(--berry);
+    border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700;transition:all .12s;}
+  .chip:hover{background:var(--blush);}
+  .chip.on{background:var(--pink);color:#fff;border-color:var(--pink);}
+  .seg{display:flex;gap:6px;background:var(--blush);border:2px solid #FF8FB866;padding:5px;border-radius:18px;}
+  .seg button{flex:1;background:transparent;color:var(--berry);padding:9px;border-radius:13px;
+    font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;font-weight:800;}
+  .seg button.on{background:#fff;color:var(--hotpink);box-shadow:0 4px 10px #FF8FB83a;}
+  .task{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:#fff;
+    border:2px solid #FF8FB844;margin-bottom:10px;animation:pop .25s ease;}
+  @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+  .task.done{background:#C9F0DD55;border-color:var(--mint);}
+  .box{width:26px;height:26px;border-radius:9px;border:2.5px solid var(--pink);background:#fff;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-weight:900;color:#fff;font-size:15px;}
+  .box.on{background:var(--hotpink);border-color:var(--hotpink);}
+  .pill{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .msg{max-width:82%;padding:11px 14px;border-radius:18px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;}
+  .msg.you{background:var(--pink);color:#fff;border-bottom-right-radius:6px;}
+  .msg.her{background:var(--blush);color:var(--plum);border:2px solid #FF8FB844;border-bottom-left-radius:6px;}
+  .progress{height:14px;background:var(--blush);border-radius:999px;overflow:hidden;border:2px solid #FF8FB855;}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--hotpink));transition:width .4s;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hide{display:none !important;}
+  @media (prefers-reduced-motion:reduce){.stella-bob,.bg-star{animation:none!important}.btn{transition:none}}
+</style>
+</head>
+<body>
+<div class="starfield" id="starfield"></div>
+
+<div class="content">
+  <!-- header -->
+  <div class="card" style="padding:18px 20px;margin-bottom:16px;display:flex;gap:16px;align-items:center;">
+    <div id="mascot"></div>
+    <div style="flex:1;min-width:0;">
+      <div class="display" style="font-size:26px;font-weight:800;color:var(--hotpink);line-height:1.05;">Stella's Study Nook</div>
+      <div style="font-size:13px;color:var(--berry);font-weight:700;margin-bottom:8px;">🎓 SDSU Astronomy · homework + tutor</div>
+      <div id="headline" style="font-size:14px;font-weight:700;margin-bottom:6px;"></div>
+      <div class="progress"><i id="progressBar" style="width:0%"></i></div>
+    </div>
+  </div>
+
+  <!-- tabs -->
+  <div class="seg" style="margin-bottom:16px;">
+    <button id="tabHw" class="on" onclick="setTab('hw')">📖 Homework</button>
+    <button id="tabTutor" onclick="setTab('tutor')">✨ Ask Stella</button>
+  </div>
+
+  <!-- HOMEWORK -->
+  <div id="hwPanel">
+    <div class="card" style="padding:18px;margin-bottom:16px;">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <input id="fTitle" placeholder="✏️  Assignment name (e.g. Problem Set 4)" onkeydown="if(event.key==='Enter')addTask()" />
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <input id="fCourse" style="flex:2 1 160px;" placeholder="📚  Course" onkeydown="if(event.key==='Enter')addTask()" />
+          <input id="fDue" style="flex:1 1 140px;" type="date" />
+        </div>
+        <div id="courseChips" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <button class="btn" onclick="addTask()" style="background:var(--hotpink);color:#fff;border-radius:16px;padding:12px;font-size:15px;margin-top:2px;">＋ Add to my list</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;" id="filterChips"></div>
+
+    <div class="card" style="padding:16px;"><div id="taskList"></div></div>
+  </div>
+
+  <!-- TUTOR -->
+  <div id="tutorPanel" class="hide">
+    <div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;height:520px;">
+      <div style="padding:12px 16px;background:var(--blush);border-bottom:2px solid #FF8FB844;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">⭐</span>
+        <span class="display" style="font-weight:800;color:var(--hotpink);">Ask Stella</span>
+        <span style="font-size:12px;color:var(--berry);font-weight:600;flex:1;">· astro study buddy</span>
+        <button class="btn" onclick="toggleSettings()" aria-label="Tutor settings" style="background:transparent;font-size:16px;">⚙️</button>
+      </div>
+
+      <div id="settings" class="hide" style="padding:12px 16px;background:#fff;border-bottom:2px solid #FF8FB844;">
+        <div style="font-size:12.5px;color:var(--berry);font-weight:700;margin-bottom:6px;">🔑 Groq key (needed only for the AI chat). Stored just in this browser — never uploaded.</div>
+        <div style="display:flex;gap:8px;">
+          <input id="keyInput" type="password" placeholder="gsk_..." style="flex:1;" />
+          <button class="btn" onclick="saveKey()" style="background:var(--hotpink);color:#fff;border-radius:14px;padding:0 16px;">Save</button>
+        </div>
+        <div style="font-size:11px;color:var(--pink);font-weight:600;margin-top:6px;">Get a free key at console.groq.com → API Keys. (The tracker works without this!)</div>
+      </div>
+
+      <div id="chatLog" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;"></div>
+
+      <div style="padding:12px;border-top:2px solid #FF8FB844;background:#fff;display:flex;gap:8px;align-items:flex-end;">
+        <textarea id="chatInput" rows="1" placeholder="Ask about a concept, a problem, an equation…" style="resize:none;max-height:100px;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+        <button class="btn" id="sendBtn" onclick="sendMessage()" aria-label="Send" style="background:var(--hotpink);color:#fff;border-radius:14px;padding:11px 14px;font-size:16px;">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:18px;font-size:12px;color:var(--pink);font-weight:700;">✨ made with love for a future astronomer ✨</div>
+</div>
+
+<script>
+// ---------- config ----------
+var COURSE_CHIPS = ["Intro Astronomy","Astrophysics","Planetary Science","Stellar Evolution","Cosmology","Observational Astro","Physics","Calculus"];
+var GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+var GROQ_MODEL = "llama-3.3-70b-versatile";
+var SYSTEM_PROMPT = "You are Stella, a warm, cheerful astronomy tutor for an astronomy major at San Diego State University (SDSU). You help across intro astronomy, astrophysics, planetary science, stellar evolution, cosmology, observational astronomy, and the supporting physics and math. Guide the student toward understanding: explain the concept and the method, give a worked example or a guiding question, and encourage them to take the next step themselves rather than just handing over final numeric answers to graded problems. Use clear analogies. Keep a gentle, kawaii, encouraging personality with the occasional sparkle or moon emoji, but stay scientifically accurate. Keep replies concise (a few short paragraphs) unless asked to go deep. Write equations in readable plain-text inline form.";
+
+// ---------- state ----------
+function load(k, fb){ try{ var v=localStorage.getItem(k); return v==null?fb:JSON.parse(v);}catch(e){return fb;} }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+var tasks = load("stella_tasks", []);
+var apiKey = load("stella_groq_key", "");
+var filter = "active";
+var tab = "hw";
+var thinking = false;
+var messages = [{role:"assistant", content:"Hi cutie! ✨ I'm Stella, your astro tutor. Stuck on a problem set, a concept, or some scary-looking equation? Tell me what you're working on and we'll figure it out together! 🌙"}];
+
+// ---------- helpers ----------
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function daysUntil(s){ if(!s) return null; var n=new Date(); n.setHours(0,0,0,0); var d=new Date(s+"T00:00:00"); return Math.round((d-n)/86400000); }
+function dueMeta(s){ var d=daysUntil(s);
+  if(d===null) return {label:"no date",tone:"none"};
+  if(d<0) return {label:Math.abs(d)+"d overdue",tone:"over"};
+  if(d===0) return {label:"due today!",tone:"soon"};
+  if(d===1) return {label:"due tomorrow",tone:"soon"};
+  if(d<=3) return {label:d+" days left",tone:"soon"};
+  return {label:d+" days left",tone:"ok"};
+}
+function toneStyle(t){
+  if(t==="over") return "background:var(--berry);color:#fff;";
+  if(t==="soon") return "background:var(--gold);color:var(--plum);";
+  if(t==="ok")   return "background:var(--lilac);color:var(--plum);";
+  return "background:var(--blush);color:var(--berry);";
+}
+
+// ---------- mascot ----------
+function mascotSVG(mood, size){
+  size = size || 78;
+  function eye(cx){
+    if(mood==="worried") return '<ellipse cx="'+cx+'" cy="41" rx="2.6" ry="3.4" fill="#4A3357"/>';
+    if(mood==="happy")   return '<path d="M'+cx+' 35 l1.6 3.4 3.8 .4 -2.8 2.6 .8 3.7 -3.4 -1.9 -3.4 1.9 .8 -3.7 -2.8 -2.6 3.8 -.4 z" fill="#4A3357"/>';
+    return '<circle cx="'+cx+'" cy="40" r="3" fill="#4A3357"/>';
+  }
+  var mouth = mood==="happy" ? '<path d="M44 54 q6 6 12 0" stroke="#4A3357" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+    : mood==="worried" ? '<path d="M45 57 q5 -4 10 0" stroke="#4A3357" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+    : '<path d="M46 54 q4 3 8 0" stroke="#4A3357" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 100 100" class="stella-bob" aria-hidden="true">'
+    +'<path d="M20 30 L14 8 L40 24 Z" fill="#FFFCFE" stroke="#FF8FB8" stroke-width="3" stroke-linejoin="round"/>'
+    +'<path d="M80 30 L86 8 L60 24 Z" fill="#FFFCFE" stroke="#FF8FB8" stroke-width="3" stroke-linejoin="round"/>'
+    +'<ellipse cx="50" cy="52" rx="34" ry="30" fill="#FFFCFE" stroke="#FF8FB8" stroke-width="3"/>'
+    +'<path d="M50 20 l1.4 3 3.3 .3 -2.5 2.2 .7 3.2 -2.9 -1.7 -2.9 1.7 .7 -3.2 -2.5 -2.2 3.3 -.3 z" fill="#FFD86B"/>'
+    +eye(38)+eye(62)
+    +'<ellipse cx="50" cy="48" rx="3.4" ry="2.4" fill="#FF5C8A"/>'+mouth
+    +'<g stroke="#FF8FB8" stroke-width="2" stroke-linecap="round"><line x1="10" y1="48" x2="24" y2="50"/><line x1="10" y1="56" x2="24" y2="56"/><line x1="90" y1="48" x2="76" y2="50"/><line x1="90" y1="56" x2="76" y2="56"/></g>'
+    +'<g transform="translate(70 20)"><path d="M0 0 L-11 -7 L-11 9 Z" fill="#FF5C8A"/><path d="M0 0 L11 -7 L11 9 Z" fill="#FF5C8A"/><circle cx="0" cy="1" r="4.5" fill="#D4396E"/></g>'
+    +'</svg>';
+}
+
+// ---------- starfield ----------
+function buildStars(){
+  var sf=document.getElementById("starfield"), html="";
+  for(var i=0;i<26;i++){
+    var left=Math.random()*100, top=Math.random()*100, d=3+Math.random()*4, delay=Math.random()*5, s=6+Math.random()*10, gold=Math.random()>0.5;
+    html+='<svg class="bg-star" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" style="left:'+left+'%;top:'+top+'%;animation-duration:'+d+'s;animation-delay:'+delay+'s;">'
+      +'<path d="M12 2 l2.9 6.3 6.9 .7 -5.2 4.6 1.5 6.8 -6.1-3.6 -6.1 3.6 1.5-6.8 -5.2-4.6 6.9-.7 z" fill="'+(gold?"#FFD86B":"#FF8FB8")+'"/></svg>';
+  }
+  sf.innerHTML=html;
+}
+
+// ---------- render ----------
+function renderHeader(){
+  var active = tasks.filter(function(t){return !t.done;});
+  var done = tasks.length-active.length;
+  var overdue = active.some(function(t){return dueMeta(t.due).tone==="over";});
+  var allDone = tasks.length>0 && active.length===0;
+  var mood = allDone?"happy":overdue?"worried":"chill";
+  var headline = allDone?"All done — you're a star! 🌟"
+    : overdue?"Eek, something's overdue!"
+    : active.length?(active.length+" thing"+(active.length>1?"s":"")+" to conquer 💪")
+    : "Add your first assignment!";
+  document.getElementById("mascot").innerHTML = mascotSVG(mood);
+  document.getElementById("headline").textContent = headline;
+  document.getElementById("progressBar").style.width = (tasks.length?(done/tasks.length)*100:0)+"%";
+}
+
+function renderTasks(){
+  var list = tasks.filter(function(t){ return filter==="all"?true:filter==="done"?t.done:!t.done; })
+    .sort(function(a,b){ if(a.done!==b.done) return a.done?1:-1; if(!a.due) return 1; if(!b.due) return -1; return a.due<b.due?-1:1; });
+  var el = document.getElementById("taskList");
+  if(list.length===0){
+    el.innerHTML='<div style="text-align:center;padding:26px 10px;color:var(--berry);"><div style="font-size:32px;">🌙</div>'
+      +'<div style="font-weight:800;margin-top:8px;font-size:15px;">'+(filter==="done"?"Nothing finished yet — you got this! 🌸":"All clear! Your sky is calm ✨")+'</div></div>';
+    return;
+  }
+  el.innerHTML = list.map(function(t){
+    var m=dueMeta(t.due);
+    var pill = (t.due && !t.done) ? '<span class="pill" style="'+toneStyle(m.tone)+'">💗 '+esc(m.label)+'</span>' : '';
+    var course = t.course ? '<span style="font-size:12px;color:var(--berry);font-weight:700;">📚 '+esc(t.course)+'</span>' : '';
+    return '<div class="task'+(t.done?" done":"")+'">'
+      +'<div class="box'+(t.done?" on":"")+'" role="checkbox" aria-checked="'+t.done+'" tabindex="0" onclick="toggleTask('+t.id+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleTask('+t.id+');}">'+(t.done?"✓":"")+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:15px;'+(t.done?"text-decoration:line-through;opacity:.6;":"")+'">'+esc(t.title)+'</div>'
+      +'<div style="display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap;">'+course+pill+'</div></div>'
+      +'<button class="btn" onclick="removeTask('+t.id+')" aria-label="Delete" style="background:transparent;color:var(--pink);padding:6px;border-radius:10px;font-size:16px;">🗑️</button>'
+      +'</div>';
+  }).join("");
+}
+
+function renderChat(){
+  var el = document.getElementById("chatLog");
+  var html = messages.map(function(m){
+    var avatar = m.role==="assistant" ? mascotSVG("chill",34) : "";
+    return '<div style="display:flex;justify-content:'+(m.role==="user"?"flex-end":"flex-start")+';gap:8px;align-items:flex-end;">'
+      +avatar+'<div class="msg '+(m.role==="user"?"you":"her")+'">'+esc(m.content)+'</div></div>';
+  }).join("");
+  if(thinking){
+    html+='<div style="display:flex;align-items:center;gap:8px;color:var(--berry);font-weight:700;font-size:13px;"><span style="display:inline-block;animation:spin 1s linear infinite;">🌸</span> Stella\'s thinking...</div>';
+  }
+  el.innerHTML=html;
+  el.scrollTop=el.scrollHeight;
+}
+
+function renderChips(){
+  document.getElementById("courseChips").innerHTML = COURSE_CHIPS.map(function(c){
+    return '<button class="chip" onclick="pickCourse(\''+c.replace(/'/g,"\\'")+'\')">'+esc(c)+'</button>';
+  }).join("");
+  var f=[["active","To do"],["done","Done"],["all","All"]];
+  document.getElementById("filterChips").innerHTML = f.map(function(p){
+    return '<button class="chip'+(filter===p[0]?" on":"")+'" onclick="setFilter(\''+p[0]+'\')">'+p[1]+'</button>';
+  }).join("");
+}
+
+// ---------- actions ----------
+function addTask(){
+  var title=document.getElementById("fTitle").value.trim();
+  if(!title) return;
+  var course=document.getElementById("fCourse").value.trim();
+  var due=document.getElementById("fDue").value;
+  tasks.push({id:Date.now(),title:title,course:course,due:due,done:false});
+  save("stella_tasks",tasks);
+  document.getElementById("fTitle").value=""; document.getElementById("fCourse").value=""; document.getElementById("fDue").value="";
+  renderHeader(); renderTasks();
+}
+function toggleTask(id){ tasks=tasks.map(function(t){return t.id===id?Object.assign({},t,{done:!t.done}):t;}); save("stella_tasks",tasks); renderHeader(); renderTasks(); }
+function removeTask(id){ tasks=tasks.filter(function(t){return t.id!==id;}); save("stella_tasks",tasks); renderHeader(); renderTasks(); }
+function setFilter(f){ filter=f; renderChips(); renderTasks(); }
+function pickCourse(c){ document.getElementById("fCourse").value=c; }
+function setTab(t){
+  tab=t;
+  document.getElementById("tabHw").classList.toggle("on",t==="hw");
+  document.getElementById("tabTutor").classList.toggle("on",t==="tutor");
+  document.getElementById("hwPanel").classList.toggle("hide",t!=="hw");
+  document.getElementById("tutorPanel").classList.toggle("hide",t!=="tutor");
+}
+function toggleSettings(){
+  var s=document.getElementById("settings");
+  s.classList.toggle("hide");
+  if(!s.classList.contains("hide")) document.getElementById("keyInput").value=apiKey;
+}
+function saveKey(){
+  apiKey=document.getElementById("keyInput").value.trim();
+  save("stella_groq_key",apiKey);
+  document.getElementById("settings").classList.add("hide");
+}
+
+async function sendMessage(){
+  var box=document.getElementById("chatInput");
+  var q=box.value.trim();
+  if(!q||thinking) return;
+  if(!apiKey){ document.getElementById("settings").classList.remove("hide"); document.getElementById("keyInput").focus(); return; }
+  messages.push({role:"user",content:q});
+  box.value=""; thinking=true; renderChat();
+  try{
+    var res=await fetch(GROQ_URL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+apiKey },
+      body:JSON.stringify({
+        model:GROQ_MODEL,
+        max_tokens:1000,
+        temperature:0.6,
+        messages:[{role:"system",content:SYSTEM_PROMPT}].concat(messages.map(function(m){return {role:m.role,content:m.content};}))
+      })
+    });
+    if(!res.ok){
+      var errText="";
+      try{ var ej=await res.json(); errText=ej.error?ej.error.message:""; }catch(e){}
+      if(res.status===401) messages.push({role:"assistant",content:"That key didn't work 🥺 Double-check it in ⚙️ settings — it should start with \"gsk_\" and come from console.groq.com."});
+      else messages.push({role:"assistant",content:"Hmm, something went sideways ("+res.status+"). "+(errText||"Try again in a moment.")+" 🌙"});
+    } else {
+      var data=await res.json();
+      var text=(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content||"").trim();
+      messages.push({role:"assistant",content:text||"My telescope fogged up — try asking that again? 🌙"});
+    }
+  }catch(err){
+    messages.push({role:"assistant",content:"I couldn't reach the stars just now — that's usually a connection hiccup. Check your internet and try again. ✨"});
+  }finally{
+    thinking=false; renderChat();
+  }
+}
+
+// ---------- init ----------
+buildStars(); renderChips(); renderHeader(); renderTasks(); renderChat();
+</script>
+</body>
+</html>
